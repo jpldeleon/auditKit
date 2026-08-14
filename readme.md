@@ -1,44 +1,34 @@
-# AuditKit - Full-Stack API Capstone Project
+# <AuditKit/> // by John
 
-An SEO health auditor web application built with Node.js, Express, Axios, and Cheerio.
+A full-stack SEO health auditor and web application designed to generate instant technical SEO and performance breakdowns for any given URL.
 
-## Live Demo
-Check out the live application hosted on Render:  
-**[auditkit.onrender.com](https://auditkit.onrender.com)**
-
----
-
-## Key Features
-* **SEO Metadata Parsing:** Evaluates title length, meta description, canonical tags, and OpenGraph images.
-* **Content Structure Analysis:** Scans H1 heading counts and checks for missing image ALT attributes.
-* **Speed Tracking:** Measures server response time with dynamic performance badges.
-* **Interactive UI:** Smooth health-score animations and clean hidden-state dashboard logic.
-
----
+## Features
+* **Core Web Vitals & Performance Scores:** Analyzes and displays Google PageSpeed insights for Performance, Accessibility, Best Practices, and SEO.
+* **Detailed Metrics Breakdown:** Tracks FCP, LCP, TBT, CLS, and Speed Index.
+* **On-Page SEO Checks:** Evaluates title tags, meta description lengths, H1 tag distribution, missing image alt attributes, canonical tags, robots meta tags, and Open Graph tags.
+* **Nordic-Aurora Aesthetic:** Features a custom Nord-inspired dark theme coupled with vibrant Aurora color-coding across scores, badges, and the UI layout.
 
 ## Tech Stack
-* **Frontend:** HTML5, CSS3 (Nordic Theme), Vanilla JavaScript
-* **Backend:** Node.js, Express.js
-* **Scraping Engine:** Cheerio
-* **Deployment:** Render + GitHub CI/CD pipeline
+* **Backend:** Node.js, Express, Cheerio (for metadata scraping), Google PageSpeed Insights API
+* **Frontend:** HTML5, CSS3 (Custom CSS variables), Vanilla JavaScript
 
----
+## Setup & Installation
 
-## Local Setup Instructions
-
-1. **Clone the repository:**
+1. Clone the repository:
    ```bash
-   git clone https://github.com/YOUR_GITHUB_USERNAME/AUDITKIT.git
-   cd AUDITKIT
+   git clone [https://github.com/jpldeleon/auditkit.git](https://github.com/jpldeleon/auditkit.git)
+   cd auditkit
 
-2. **Install dependencies:**
+**Install dependencies:**
    ```bash
    npm install
+```
 
-3. **Start the server:**
+**Configure your environment variables:
+Create a .env file in the root directory and add your Google PageSpeed API key:**
+PAGESPEED_API_KEY=your_actual_api_key_here
+
+**Run the application:**
    ```bash
    node server.js
-   ```
    
-4. **Open the browser:**
-   Navigate to http://localhost:5000 in your web browser.
