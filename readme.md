@@ -28,5 +28,17 @@ Check out the live application hosted on Render:
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/YOUR_GITHUB_USERNAME/AUDITKIT.git](https://github.com/YOUR_GITHUB_USERNAME/AUDITKIT.git)
+   git clone https://github.com/YOUR_GITHUB_USERNAME/AUDITKIT.git
    cd AUDITKIT
+
+   
+2. **Install dependencies:**
+   ```bash
+   npm install
+
+3. **Start the server:**
+```bash
+   node server.js
+   
+   Open in browser:
+   Navigate to http://localhost:5000 in your web browser.
