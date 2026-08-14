@@ -1,4 +1,4 @@
-# <AuditKit/> // by John
+# AuditKit // by John
 
 A full-stack SEO health auditor and web application designed to generate instant technical SEO and performance breakdowns for any given URL.
 
