@@ -19,16 +19,16 @@ A full-stack SEO health auditor and web application designed to generate instant
    git clone [https://github.com/jpldeleon/auditkit.git](https://github.com/jpldeleon/auditkit.git)
    cd auditkit
 
-**Install dependencies:**
-   ```bash
-   npm install
-```
+    **Install dependencies:**
+    ```bash
+    npm install
+    ```
 
-**Configure your environment variables:
-Create a .env file in the root directory and add your Google PageSpeed API key:**
-PAGESPEED_API_KEY=your_actual_api_key_here
+    **Configure your environment variables:**
+    **Create a .env file in the root directory and add your Google PageSpeed API key:**
+    ```bash
+    PAGESPEED_API_KEY=your_actual_api_key_here
 
-**Run the application:**
-   ```bash
-   node server.js
-   
+    **Run the application:**
+    ```bash
+    node server.js
