@@ -1,6 +1,6 @@
-# AuditKit – SEO Health Auditor
+# AuditKit - Full-Stack API Capstone Project
 
-A lightweight, full-stack web application that fetches live webpage HTML to analyze key technical SEO elements, metadata, and performance metrics.
+An SEO health auditor web application built with Node.js, Express, Axios, and Cheerio.
 
 ## Live Demo
 Check out the live application hosted on Render:  

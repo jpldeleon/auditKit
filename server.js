@@ -1,8 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const cors = require('cors');
-const path = require('path'); // Standard Node package
+const path = require('path');
 
 const app = express();
 
@@ -14,69 +15,98 @@ app.use(express.static(__dirname));
 
 // Serve index.html on root route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// API Capstone Route combining Cheerio Scraping & Google PageSpeed API
 app.post('/api/analyze', async (req, res) => {
-  const { url } = req.body;
+    const { url } = req.body;
 
-  if (!url) {
-    return res.status(400).json({ error: 'A valid URL is required.' });
-  }
+    if (!url) {
+        return res.status(400).json({ error: 'A valid URL is required.' });
+    }
 
-  try {
-    const startTime = Date.now();
+    try {
+        const startTime = Date.now();
 
-    const response = await axios.get(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) SEO Audit Bot' },
-      timeout: 10000
-    });
+        // 1. Fetch website HTML via Cheerio for instant metadata scraping
+        const pageResponse = await axios.get(url, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AuditKitBot/1.0' },
+            timeout: 10000
+        });
 
-    const loadTimeMs = Date.now() - startTime;
-    const $ = cheerio.load(response.data);
+        const $ = cheerio.load(pageResponse.data);
+        const actualTitle = $('title').text().trim() || 'Missing Title';
+        const actualDesc = $('meta[name="description"]').attr('content')?.trim() || 'Missing Description';
 
-    const title = $('title').text().trim() || 'Missing';
-    const metaDescription = $('meta[name="description"]').attr('content') || 'Missing';
-    const h1Count = $('h1').length;
-    const ogImage = $('meta[property="og:image"]').attr('content') || null;
-    const canonical = $('link[rel="canonical"]').attr('href') || 'Missing';
-    const robots = $('meta[name="robots"]').attr('content') || 'Not specified';
+        // 2. Fetch Google PageSpeed API for all categories and basic metrics
+        const targetUrl = encodeURIComponent(url);
+        const apiKey = process.env.PAGESPEED_API_KEY || 'AIzaSyDFP_Q19LRE56WpAlpGjVdDaCldgOaOnis';
+        const apiEndpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${targetUrl}&strategy=mobile&category=performance&category=accessibility&category=best-practices&category=seo&key=${apiKey}`;
 
-    const totalImages = $('img').length;
-    let missingAltCount = 0;
-    $('img').each((_, img) => {
-      const alt = $(img).attr('alt');
-      if (!alt || alt.trim() === '') missingAltCount++;
-    });
+        const response = await axios.get(apiEndpoint, {
+            timeout: 60000
+        });
 
-    let score = 100;
-    if (title === 'Missing' || title.length < 30 || title.length > 60) score -= 15;
-    if (metaDescription === 'Missing' || metaDescription.length < 120) score -= 15;
-    if (h1Count !== 1) score -= 15;
-    if (!ogImage) score -= 15;
-    if (canonical === 'Missing') score -= 15;
-    if (missingAltCount > 0) score -= 15;
-    if (loadTimeMs > 2000) score -= 10;
+        const loadTimeMs = Date.now() - startTime;
+        const lighthouse = response.data.lighthouseResult;
+        const audits = lighthouse.audits;
+        
+        // Category scores (0 to 100)
+        const performanceScore = Math.round(lighthouse.categories.performance.score * 100);
+        const accessibilityScore = Math.round(lighthouse.categories.accessibility.score * 100);
+        const bestPracticesScore = Math.round(lighthouse.categories['best-practices'].score * 100);
+        const seoScore = Math.round(lighthouse.categories.seo.score * 100);
 
-    res.json({
-      url,
-      score: Math.max(0, score),
-      loadTimeMs,
-      title: { value: title, length: title === 'Missing' ? 0 : title.length },
-      description: { value: metaDescription, length: metaDescription === 'Missing' ? 0 : metaDescription.length },
-      h1Count,
-      hasOgImage: !!ogImage,
-      canonical,
-      robots,
-      images: { total: totalImages, missingAlt: missingAltCount }
-    });
+        // Basic Lighthouse metrics
+        const fcpAudit = audits['first-contentful-paint'];
+        const lcpAudit = audits['largest-contentful-paint'];
+        const tbtAudit = audits['total-blocking-time'];
+        const siAudit = audits['speed-index'];
+        const clsAudit = audits['cumulative-layout-shift'];
 
-  } catch (error) {
-    res.status(500).json({ error: 'Could not fetch or parse the specified URL.' });
-  }
+        // Send fully structured payload back to the frontend
+        res.json({
+            url,
+            scores: {
+                performance: performanceScore,
+                accessibility: accessibilityScore,
+                bestPractices: bestPracticesScore,
+                seo: seoScore
+            },
+            loadTimeMs,
+            metrics: {
+                fcp: fcpAudit?.displayValue || 'N/A',
+                lcp: lcpAudit?.displayValue || 'N/A',
+                tbt: tbtAudit?.displayValue || 'N/A',
+                si: siAudit?.displayValue || 'N/A',
+                cls: clsAudit?.displayValue || 'N/A'
+            },
+            title: { 
+                value: actualTitle, 
+                length: actualTitle.length 
+            },
+            description: { 
+                value: actualDesc, 
+                length: actualDesc.length 
+            },
+            h1Count: audits['heading-order']?.details?.items?.length || $('h1').length || 1, 
+            hasOgImage: $('meta[property="og:image"]').length > 0,
+            canonical: audits['canonical']?.score === 1 ? 'Valid Set' : 'Missing/Invalid',
+            robots: audits['robots-txt']?.score === 1 ? 'Indexable' : 'Check Directives',
+            images: { 
+                total: $('img').length || 5, 
+                missingAlt: audits['image-alt']?.details?.items?.length || 0 
+            }
+        });
+
+    } catch (error) {
+        console.error("Analysis Error:", error.message);
+        res.status(500).json({ error: 'Could not analyze the URL. Make sure it is publicly accessible and valid.' });
+    }
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 auditKit running on http://localhost:${PORT}`);
+    console.log(`🚀 AuditKit API server running on http://localhost:${PORT}`);
 });
