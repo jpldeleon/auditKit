@@ -31,14 +31,14 @@ Check out the live application hosted on Render:
    git clone https://github.com/YOUR_GITHUB_USERNAME/AUDITKIT.git
    cd AUDITKIT
 
-   
 2. **Install dependencies:**
    ```bash
    npm install
 
 3. **Start the server:**
-```bash
+   ```bash
    node server.js
+   ```
    
-   Open in browser:
+4. **Open the browser:**
    Navigate to http://localhost:5000 in your web browser.
