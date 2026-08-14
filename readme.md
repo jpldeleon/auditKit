@@ -1,5 +1,7 @@
 # AuditKit // by John
 
+[![Live Demo](https://img.shields.io/badge/Live-Render-blue?style=flat-square&logo=render)](https://auditkit.onrender.com)
+
 A full-stack SEO health auditor and web application designed to generate instant technical SEO and performance breakdowns for any given URL.
 
 ## Features
