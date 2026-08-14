@@ -83,6 +83,11 @@
             pointer-events: none;
         }
 
+        /* Hides the results wrapper initially */
+        .hidden {
+            display: none !important;
+        }
+
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -162,200 +167,197 @@
 <div class="container">
     <header>
         <h1 style="font-family: monospace;">
-    <span style="color: var(--nordic-sky);">&lt;AuditKit/&gt;</span> 
-    <span style="color: var(--nordic-text-muted); font-size: 1rem; margin-left: 10px;">// by John</span>
-</h1>
+            <span style="color: var(--nordic-sky);">&lt;AuditKit/&gt;</span> 
+            <span style="color: var(--nordic-text-muted); font-size: 1rem; margin-left: 10px;">// by John</span>
+        </h1>
         <p style="color: var(--nordic-text-muted);">Enter a site URL to generate an instant technical SEO breakdown.</p>
     </header>
 
     <form onsubmit="runAudit(event)">
         <div class="input-group">
-            <input type="url" id="urlInput" placeholder="https://example.com" required>
+            <input type="url" id="urlInput" placeholder="https://domain.com" required>
             <button type="submit" id="submitBtn">Run Audit</button>
         </div>
     </form>
 
-    <div class="grid">
-        <div class="card">
-            <h3>Health Score</h3>
-            <div class="score-val" id="healthScore">0%</div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="scoreBar"></div>
+    <!-- WRAPPER STARTS HERE: Hides everything below until an audit runs -->
+    <div id="resultsContainer" class="hidden">
+        <div class="grid">
+            <div class="card">
+                <h3>Health Score</h3>
+                <div class="score-val" id="healthScore">0%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="scoreBar"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Response Speed</h3>
+                <div class="score-val" id="responseTime">0 ms</div>
+                <p id="speedStatus" style="margin: 0; font-weight: bold;">-</p>
             </div>
         </div>
 
-        <div class="card">
-            <h3>Response Speed</h3>
-            <div class="score-val" id="responseTime">0 ms</div>
-            <p id="speedStatus" style="margin: 0; font-weight: bold;">-</p>
+        <div class="badge-grid">
+            <div class="badge" id="titleBadge">Title: -</div>
+            <div class="badge" id="descBadge">Description: -</div>
+            <div class="badge" id="h1Badge">H1 Tag: -</div>
+            <div class="badge" id="imgBadge">Missing Alt: -</div>
         </div>
-    </div>
 
-    <div class="badge-grid">
-        <div class="badge" id="titleBadge">Title: -</div>
-        <div class="badge" id="descBadge">Description: -</div>
-        <div class="badge" id="h1Badge">H1 Tag: -</div>
-        <div class="badge" id="imgBadge">Missing Alt: -</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Element</th>
+                    <th>Result</th>
+                    <th>Recommendation</th>
+                </tr>
+            </thead>
+            <tbody id="reportTable">
+                <tr>
+                    <td colspan="3" style="text-align: center; color: var(--nordic-text-muted);">No audit data yet. Enter a URL above.</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Element</th>
-                <th>Result</th>
-                <th>Recommendation</th>
-            </tr>
-        </thead>
-        <tbody id="reportTable">
-            <tr>
-                <td colspan="3" style="text-align: center; color: var(--nordic-text-muted);">No audit data yet. Enter a URL above.</td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- WRAPPER ENDS HERE -->
 </div>
 
 <script>
     function animateValue(element, start, end, duration) {
-    let startTimestamp = null;
-    const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        
-        // Easing function for smooth slowdown at the end (ease-out)
-        const currentScore = Math.floor(progress * (end - start) + start);
-        element.innerText = `${currentScore}%`;
-        
-        if (progress < 1) {
-            window.requestAnimationFrame(step);
-        }
-    };
-    window.requestAnimationFrame(step);
-}
-
-async function runAudit(event) {
-    if (event) event.preventDefault();
-    const url = document.getElementById('urlInput').value;
-    const submitBtn = document.getElementById('submitBtn');
-
-    submitBtn.classList.add('btn-loading');
-
-    try {
-        // Detect if running on localhost, 127.0.0.1, OR directly opened as a local file (file://)
-        const isLocal = window.location.hostname === 'localhost' || 
-                        window.location.hostname === '127.0.0.1' || 
-                        window.location.protocol === 'file:';
-
-        const apiEndpoint = isLocal 
-            ? 'http://localhost:5000/api/analyze' 
-            : '/api/analyze';
-
-        const response = await fetch(apiEndpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url })
-        });
-
-        // 1. Parse JSON response (This was missing!)
-        const data = await response.json();
-
-        // 2. Handle server-side errors
-        if (data.error) {
-            alert(data.error);
-            return;
-        }
-
-// 3. Color-coded Health Score & Animated Counter
-        const scoreEl = document.getElementById('healthScore');
-        const scoreBar = document.getElementById('scoreBar');
-        
-        // Reset bar width and score counter
-        scoreBar.style.width = '0%';
-        scoreEl.innerText = '0%';
-
-        // Trigger smooth count up animation over 1000ms
-        animateValue(scoreEl, 0, data.score, 1000);
-        
-        // Animate the bar width
-        setTimeout(() => {
-            scoreBar.style.width = `${data.score}%`;
-        }, 50);
-
-        // Set bar color based on score
-        if (data.score >= 75) {
-            scoreBar.style.backgroundColor = 'var(--nordic-emerald)';
-        } else if (data.score >= 50) {
-            scoreBar.style.backgroundColor = 'var(--nordic-sky)';
-        } else {
-            scoreBar.style.backgroundColor = 'var(--nordic-rose)';
-        }
-        // 4. Speed Card
-        document.getElementById('responseTime').innerText = `${data.loadTimeMs} ms`;
-        const speedEl = document.getElementById('speedStatus');
-        speedEl.innerText = data.loadTimeMs < 1000 ? '⚡ Very Fast' : (data.loadTimeMs < 2500 ? '🐢 Moderate' : '🐌 Slow');
-        speedEl.style.color = data.loadTimeMs < 1000 ? 'var(--nordic-emerald)' : (data.loadTimeMs < 2500 ? 'var(--nordic-sky)' : 'var(--nordic-rose)');
-
-        // 5. Badges
-        updateBadge('titleBadge', data.title.value !== 'Missing', `Title: ${data.title.value !== 'Missing' ? 'Found' : 'Missing'}`);
-        updateBadge('descBadge', data.description.value !== 'Missing', `Description: ${data.description.value !== 'Missing' ? 'Found' : 'Missing'}`);
-        updateBadge('h1Badge', data.h1Count === 1, `H1 Count: ${data.h1Count}`);
-        updateBadge('imgBadge', data.images.missingAlt === 0, `Missing Alt Text: ${data.images.missingAlt}`);
-
-        // 6. Table Rows
-        document.getElementById('reportTable').innerHTML = `
-            <tr>
-                <td><strong>Title Tag</strong></td>
-                <td style="color: var(--nordic-sky);">${data.title.value}</td>
-                <td style="color: var(--nordic-text-muted);">${data.title.length} chars (Target: 30-60)</td>
-            </tr>
-            <tr>
-                <td><strong>Meta Description</strong></td>
-                <td style="color: var(--nordic-sky);">${data.description.value}</td>
-                <td style="color: var(--nordic-text-muted);">${data.description.length} chars (Target: 120-160)</td>
-            </tr>
-            <tr>
-                <td><strong>H1 Heading</strong></td>
-                <td style="color: var(--nordic-sky);">${data.h1Count} tag(s) found</td>
-                <td style="color: var(--nordic-text-muted);">${data.h1Count === 1 ? 'Optimal' : 'Should have exactly 1 H1'}</td>
-            </tr>
-            <tr>
-                <td><strong>Image ALT Attributes</strong></td>
-                <td style="color: var(--nordic-sky);">${data.images.missingAlt} of ${data.images.total} missing alt text</td>
-                <td style="color: var(--nordic-text-muted);">${data.images.missingAlt === 0 ? 'All images labeled' : 'Add alt attributes for accessibility'}</td>
-            </tr>
-            <tr>
-                <td><strong>Canonical URL</strong></td>
-                <td style="color: var(--nordic-sky);">${data.canonical}</td>
-                <td style="color: var(--nordic-text-muted);">${data.canonical !== 'Missing' ? 'Self-referencing set' : 'Missing canonical tag'}</td>
-            </tr>
-            <tr>
-                <td><strong>Robots Meta Tag</strong></td>
-                <td style="color: var(--nordic-sky);">${data.robots}</td>
-                <td style="color: var(--nordic-text-muted);">Indexing directives</td>
-            </tr>
-            <tr>
-                <td><strong>Open Graph Image</strong></td>
-                <td style="color: var(--nordic-sky);">${data.hasOgImage ? 'Present' : 'Not detected'}</td>
-                <td style="color: var(--nordic-text-muted);">${data.hasOgImage ? 'Ready for social sharing' : 'Missing thumbnail tag'}</td>
-            </tr>
-        `;
-
-    } catch (err) {
-        console.error("Audit error details:", err);
-        alert("Error connecting to server. Make sure 'node server.js' is running!");
-    } finally {
-        submitBtn.classList.remove('btn-loading');
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const currentScore = Math.floor(progress * (end - start) + start);
+            element.innerText = `${currentScore}%`;
+            
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
     }
-}
 
-function updateBadge(id, isSuccess, text) {
-    const el = document.getElementById(id);
-    el.innerText = text;
-    el.style.borderColor = isSuccess ? 'var(--nordic-emerald)' : 'var(--nordic-rose)';
-    el.style.color = isSuccess ? 'var(--nordic-emerald)' : 'var(--nordic-rose)';
-}
+    async function runAudit(event) {
+        if (event) event.preventDefault();
+        const url = document.getElementById('urlInput').value;
+        const submitBtn = document.getElementById('submitBtn');
+
+        submitBtn.classList.add('btn-loading');
+
+        try {
+            const isLocal = window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1' || 
+                            window.location.protocol === 'file:';
+
+            const apiEndpoint = isLocal 
+                ? 'http://localhost:5000/api/analyze' 
+                : '/api/analyze';
+
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            // REVEAL RESULTS PANEL ON SUCCESS
+            document.getElementById('resultsContainer').classList.remove('hidden');
+
+            // Health Score & Animation
+            const scoreEl = document.getElementById('healthScore');
+            const scoreBar = document.getElementById('scoreBar');
+            
+            scoreBar.style.width = '0%';
+            scoreEl.innerText = '0%';
+
+            animateValue(scoreEl, 0, data.score, 1000);
+            
+            setTimeout(() => {
+                scoreBar.style.width = `${data.score}%`;
+            }, 50);
+
+            if (data.score >= 75) {
+                scoreBar.style.backgroundColor = 'var(--nordic-emerald)';
+            } else if (data.score >= 50) {
+                scoreBar.style.backgroundColor = 'var(--nordic-sky)';
+            } else {
+                scoreBar.style.backgroundColor = 'var(--nordic-rose)';
+            }
+
+            // Speed Card
+            document.getElementById('responseTime').innerText = `${data.loadTimeMs} ms`;
+            const speedEl = document.getElementById('speedStatus');
+            speedEl.innerText = data.loadTimeMs < 1000 ? '⚡ Very Fast' : (data.loadTimeMs < 2500 ? '🐢 Moderate' : '🐌 Slow');
+            speedEl.style.color = data.loadTimeMs < 1000 ? 'var(--nordic-emerald)' : (data.loadTimeMs < 2500 ? 'var(--nordic-sky)' : 'var(--nordic-rose)');
+
+            // Badges
+            updateBadge('titleBadge', data.title.value !== 'Missing', `Title: ${data.title.value !== 'Missing' ? 'Found' : 'Missing'}`);
+            updateBadge('descBadge', data.description.value !== 'Missing', `Description: ${data.description.value !== 'Missing' ? 'Found' : 'Missing'}`);
+            updateBadge('h1Badge', data.h1Count === 1, `H1 Count: ${data.h1Count}`);
+            updateBadge('imgBadge', data.images.missingAlt === 0, `Missing Alt Text: ${data.images.missingAlt}`);
+
+            // Table Rows
+            document.getElementById('reportTable').innerHTML = `
+                <tr>
+                    <td><strong>Title Tag</strong></td>
+                    <td style="color: var(--nordic-sky);">${data.title.value}</td>
+                    <td style="color: var(--nordic-text-muted);">${data.title.length} chars (Target: 30-60)</td>
+                </tr>
+                <tr>
+                    <td><strong>Meta Description</strong></td>
+                    <td style="color: var(--nordic-sky);">${data.description.value}</td>
+                    <td style="color: var(--nordic-text-muted);">${data.description.length} chars (Target: 120-160)</td>
+                </tr>
+                <tr>
+                    <td><strong>H1 Heading</strong></td>
+                    <td style="color: var(--nordic-sky);">${data.h1Count} tag(s) found</td>
+                    <td style="color: var(--nordic-text-muted);">${data.h1Count === 1 ? 'Optimal' : 'Should have exactly 1 H1'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Image ALT Attributes</strong></td>
+                    <td style="color: var(--nordic-sky);">${data.images.missingAlt} of ${data.images.total} missing alt text</td>
+                    <td style="color: var(--nordic-text-muted);">${data.images.missingAlt === 0 ? 'All images labeled' : 'Add alt attributes for accessibility'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Canonical URL</strong></td>
+                    <td style="color: var(--nordic-sky);">${data.canonical}</td>
+                    <td style="color: var(--nordic-text-muted);">${data.canonical !== 'Missing' ? 'Self-referencing set' : 'Missing canonical tag'}</td>
+                </tr>
+                <tr>
+                    <td><strong>Robots Meta Tag</strong></td>
+                    <td style="color: var(--nordic-sky);">${data.robots}</td>
+                    <td style="color: var(--nordic-text-muted);">Indexing directives</td>
+                </tr>
+                <tr>
+                    <td><strong>Open Graph Image</strong></td>
+                    <td style="color: var(--nordic-sky);">${data.hasOgImage ? 'Present' : 'Not detected'}</td>
+                    <td style="color: var(--nordic-text-muted);">${data.hasOgImage ? 'Ready for social sharing' : 'Missing thumbnail tag'}</td>
+                </tr>
+            `;
+
+        } catch (err) {
+            console.error("Audit error details:", err);
+            alert("Error connecting to server. Make sure 'node server.js' is running!");
+        } finally {
+            submitBtn.classList.remove('btn-loading');
+        }
+    }
+
+    function updateBadge(id, isSuccess, text) {
+        const el = document.getElementById(id);
+        el.innerText = text;
+        el.style.borderColor = isSuccess ? 'var(--nordic-emerald)' : 'var(--nordic-rose)';
+        el.style.color = isSuccess ? 'var(--nordic-emerald)' : 'var(--nordic-rose)';
+    }
 </script>
-
-
 
 </body>
 </html>
