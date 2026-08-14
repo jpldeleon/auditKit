@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -142,7 +143,8 @@
             border: 1px solid var(--nordic-border);
         }
 
-        th, td {
+        th,
+        td {
             padding: 14px 18px;
             text-align: left;
             border-bottom: 1px solid var(--nordic-border);
@@ -166,8 +168,14 @@
         }
 
         @keyframes spinner-grow {
-            0% { transform: scale(0); }
-            50% { opacity: 1; transform: none; }
+            0% {
+                transform: scale(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: none;
+            }
         }
 
         .spinner-grow {
@@ -181,15 +189,38 @@
             animation: 0.75s linear infinite spinner-grow;
         }
 
-        .text-primary { color: var(--aurora-red); }
-        .text-secondary { color: var(--aurora-orange); }
-        .text-success { color: var(--aurora-green); }
-        .text-danger { color: var(--aurora-red); }
-        .text-warning { color: var(--aurora-yellow); }
-        .text-info { color: var(--aurora-purple); }
-        .text-light { color: var(--nord-6); }
-        .text-dark { color: var(--nord-0); }
-        
+        .text-primary {
+            color: var(--aurora-red);
+        }
+
+        .text-secondary {
+            color: var(--aurora-orange);
+        }
+
+        .text-success {
+            color: var(--aurora-green);
+        }
+
+        .text-danger {
+            color: var(--aurora-red);
+        }
+
+        .text-warning {
+            color: var(--aurora-yellow);
+        }
+
+        .text-info {
+            color: var(--aurora-purple);
+        }
+
+        .text-light {
+            color: var(--nord-6);
+        }
+
+        .text-dark {
+            color: var(--nord-0);
+        }
+
         .sr-only {
             position: absolute;
             width: 1px;
@@ -203,107 +234,153 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <header>
-         <h1 style="font-family: 'Fira Code', Consolas, monospace; font-size: 1.6rem; margin-bottom: 0.5rem;">
-        <span style="color: #bf616a;">&lt;</span><span style="color: #d08770; font-weight: bold;">AuditKit</span><span style="color: #ebcb8b;">/</span><span style="color: #bf616a;">&gt;</span> 
-        <span style="color: #a3be8c; font-size: 0.95rem; margin-left: 12px; font-style: italic; font-weight: normal;">// by John</span>
-    </h1>
-        <p style="color: var(--nordic-text-muted);">Enter a site URL to generate an instant technical SEO & Performance breakdown.</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1 style="font-family: 'Fira Code', Consolas, monospace; font-size: 1.6rem; margin-bottom: 0.5rem;">
+                <span style="color: #bf616a;">&lt;</span><span
+                    style="color: #d08770; font-weight: bold;">AuditKit</span><span
+                    style="color: #ebcb8b;">/</span><span style="color: #bf616a;">&gt;</span>
+                <span
+                    style="color: #a3be8c; font-size: 0.95rem; margin-left: 12px; font-style: italic; font-weight: normal;">//
+                    by John</span>
+            </h1>
+            <p style="color: var(--nordic-text-muted);">Enter a site URL to generate an instant technical SEO &
+                Performance breakdown.</p>
+        </header>
 
-    <form onsubmit="runAudit(event)">
-        <div class="input-group">
-            <input type="url" id="urlInput" placeholder="https://domain.com" required>
-            <button type="submit" id="submitBtn">Run Audit</button>
+        <form onsubmit="runAudit(event)">
+            <div class="input-group">
+                <input type="url" id="urlInput" placeholder="https://domain.com" required>
+                <button type="submit" id="submitBtn">Run Audit</button>
+            </div>
+        </form>
+
+        <div id="resultsContainer" class="hidden">
+            <!-- 4 Category Score Pills using Aurora Theme Colors -->
+            <div class="category-grid">
+                <div class="card" style="text-align: center; padding: 1rem; border-top: 3px solid var(--aurora-red);">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--aurora-red);" id="scorePerf">-</div>
+                    <div style="font-size: 0.85rem; color: var(--nordic-text-muted); margin-top: 4px;">Performance</div>
+                </div>
+                <div class="card"
+                    style="text-align: center; padding: 1rem; border-top: 3px solid var(--aurora-orange);">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--aurora-orange);" id="scoreAccess">-
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--nordic-text-muted); margin-top: 4px;">Accessibility
+                    </div>
+                </div>
+                <div class="card"
+                    style="text-align: center; padding: 1rem; border-top: 3px solid var(--aurora-yellow);">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--aurora-yellow);" id="scoreBest">-
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--nordic-text-muted); margin-top: 4px;">Best Practices
+                    </div>
+                </div>
+                <div class="card" style="text-align: center; padding: 1rem; border-top: 3px solid var(--aurora-green);">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: var(--aurora-green);" id="scoreSeo">-</div>
+                    <div style="font-size: 0.85rem; color: var(--nordic-text-muted); margin-top: 4px;">SEO</div>
+                </div>
+            </div>
+
+            <!-- Basic Metrics List Card -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3
+                    style="margin-top: 0; border-bottom: 1px solid var(--nordic-border); padding-bottom: 10px; color: var(--aurora-yellow);">
+                    Metrics</h3>
+                <div class="metrics-grid">
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--nordic-text-muted);">First Contentful Paint (FCP)
+                        </div>
+                        <div id="metricFcp"
+                            style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--aurora-orange);">
+                            -</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--nordic-text-muted);">Largest Contentful Paint (LCP)
+                        </div>
+                        <div id="metricLcp"
+                            style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--aurora-red);">-
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--nordic-text-muted);">Total Blocking Time (TBT)
+                        </div>
+                        <div id="metricTbt"
+                            style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--aurora-yellow);">
+                            -</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--nordic-text-muted);">Cumulative Layout Shift (CLS)
+                        </div>
+                        <div id="metricCls"
+                            style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--aurora-green);">-
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--nordic-text-muted);">Speed Index</div>
+                        <div id="metricSi"
+                            style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--aurora-purple);">
+                            -</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="badge-grid">
+                <div class="badge" id="titleBadge">Title: -</div>
+                <div class="badge" id="descBadge">Description: -</div>
+                <div class="badge" id="h1Badge">H1 Count: -</div>
+                <div class="badge" id="imgBadge">Missing Alt: -</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Element</th>
+                        <th>Result</th>
+                        <th>Recommendation</th>
+                    </tr>
+                </thead>
+                <tbody id="reportTable">
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: var(--nordic-text-muted);">No audit data yet.
+                            Enter a URL above.</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    </form>
-
-    <div id="resultsContainer" class="hidden">
-        <!-- 4 Category Score Pills using Aurora Theme Colors -->
-        <div class="category-grid">
-            <div class="card" style="text-align: center; padding: 1rem; border-top: 3px solid var(--aurora-red);">
-                <div style="font-size: 1.5rem; font-weight: bold; color: var(--aurora-red);" id="scorePerf">-</div>
-                <div style="font-size: 0.85rem; color: var(--nordic-text-muted); margin-top: 4px;">Performance</div>
-            </div>
-            <div class="card" style="text-align: center; padding: 1rem; border-top: 3px solid var(--aurora-orange);">
-                <div style="font-size: 1.5rem; font-weight: bold; color: var(--aurora-orange);" id="scoreAccess">-</div>
-                <div style="font-size: 0.85rem; color: var(--nordic-text-muted); margin-top: 4px;">Accessibility</div>
-            </div>
-            <div class="card" style="text-align: center; padding: 1rem; border-top: 3px solid var(--aurora-yellow);">
-                <div style="font-size: 1.5rem; font-weight: bold; color: var(--aurora-yellow);" id="scoreBest">-</div>
-                <div style="font-size: 0.85rem; color: var(--nordic-text-muted); margin-top: 4px;">Best Practices</div>
-            </div>
-            <div class="card" style="text-align: center; padding: 1rem; border-top: 3px solid var(--aurora-green);">
-                <div style="font-size: 1.5rem; font-weight: bold; color: var(--aurora-green);" id="scoreSeo">-</div>
-                <div style="font-size: 0.85rem; color: var(--nordic-text-muted); margin-top: 4px;">SEO</div>
-            </div>
-        </div>
-
-        <!-- Basic Metrics List Card -->
-        <div class="card" style="margin-bottom: 2rem;">
-            <h3 style="margin-top: 0; border-bottom: 1px solid var(--nordic-border); padding-bottom: 10px; color: var(--aurora-yellow);">Metrics</h3>
-            <div class="metrics-grid">
-                <div>
-                    <div style="font-size: 0.85rem; color: var(--nordic-text-muted);">First Contentful Paint (FCP)</div>
-                    <div id="metricFcp" style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--aurora-orange);">-</div>
-                </div>
-                <div>
-                    <div style="font-size: 0.85rem; color: var(--nordic-text-muted);">Largest Contentful Paint (LCP)</div>
-                    <div id="metricLcp" style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--aurora-red);">-</div>
-                </div>
-                <div>
-                    <div style="font-size: 0.85rem; color: var(--nordic-text-muted);">Total Blocking Time (TBT)</div>
-                    <div id="metricTbt" style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--aurora-yellow);">-</div>
-                </div>
-                <div>
-                    <div style="font-size: 0.85rem; color: var(--nordic-text-muted);">Cumulative Layout Shift (CLS)</div>
-                    <div id="metricCls" style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--aurora-green);">-</div>
-                </div>
-                <div>
-                    <div style="font-size: 0.85rem; color: var(--nordic-text-muted);">Speed Index</div>
-                    <div id="metricSi" style="font-size: 1.1rem; font-weight: bold; margin-top: 4px; color: var(--aurora-purple);">-</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="badge-grid">
-            <div class="badge" id="titleBadge">Title: -</div>
-            <div class="badge" id="descBadge">Description: -</div>
-            <div class="badge" id="h1Badge">H1 Count: -</div>
-            <div class="badge" id="imgBadge">Missing Alt: -</div>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Element</th>
-                    <th>Result</th>
-                    <th>Recommendation</th>
-                </tr>
-            </thead>
-            <tbody id="reportTable">
-                <tr>
-                    <td colspan="3" style="text-align: center; color: var(--nordic-text-muted);">No audit data yet. Enter a URL above.</td>
-                </tr>
-            </tbody>
-        </table>
     </div>
-</div>
 
-<script>
-    async function runAudit(event) {
-        if (event) event.preventDefault();
-        const url = document.getElementById('urlInput').value;
-        const submitBtn = document.getElementById('submitBtn');
+    <script>
+        async function runAudit(event) {
+            if (event) event.preventDefault();
+            const url = document.getElementById('urlInput').value;
+            const submitBtn = document.getElementById('submitBtn');
 
-        submitBtn.classList.add('btn-loading');
+            // Reset all previous audit data
+            document.getElementById('scorePerf').innerText = '-';
+            document.getElementById('scoreAccess').innerText = '-';
+            document.getElementById('scoreBest').innerText = '-';
+            document.getElementById('scoreSeo').innerText = '-';
 
-        const resultsContainer = document.getElementById('resultsContainer');
-        resultsContainer.classList.remove('hidden');
-        document.getElementById('reportTable').innerHTML = `
+            document.getElementById('metricFcp').innerText = '-';
+            document.getElementById('metricLcp').innerText = '-';
+            document.getElementById('metricTbt').innerText = '-';
+            document.getElementById('metricCls').innerText = '-';
+            document.getElementById('metricSi').innerText = '-';
+
+            document.getElementById('titleBadge').innerText = 'Title: -';
+            document.getElementById('descBadge').innerText = 'Description: -';
+            document.getElementById('h1Badge').innerText = 'H1 Count: -';
+            document.getElementById('imgBadge').innerText = 'Missing Alt: -';
+
+            submitBtn.classList.add('btn-loading');
+
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.classList.remove('hidden');
+            document.getElementById('reportTable').innerHTML = `
             <tr>
                 <td colspan="3">
                     <div class="spinner-container">
@@ -320,40 +397,40 @@
             </tr>
         `;
 
-        try {
-            const response = await fetch('/api/analyze', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url })
-            });
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            if (data.error) {
-                alert(data.error);
-                resultsContainer.classList.add('hidden');
-                return;
-            }
+                if (data.error) {
+                    alert(data.error);
+                    resultsContainer.classList.add('hidden');
+                    return;
+                }
 
-            // Populate category score pills
-            document.getElementById('scorePerf').innerText = `${data.scores.performance}%`;
-            document.getElementById('scoreAccess').innerText = `${data.scores.accessibility}%`;
-            document.getElementById('scoreBest').innerText = `${data.scores.bestPractices}%`;
-            document.getElementById('scoreSeo').innerText = `${data.scores.seo}%`;
+                // Populate category score pills
+                document.getElementById('scorePerf').innerText = `${data.scores.performance}%`;
+                document.getElementById('scoreAccess').innerText = `${data.scores.accessibility}%`;
+                document.getElementById('scoreBest').innerText = `${data.scores.bestPractices}%`;
+                document.getElementById('scoreSeo').innerText = `${data.scores.seo}%`;
 
-            // Populate metrics list
-            document.getElementById('metricFcp').innerText = data.metrics.fcp;
-            document.getElementById('metricLcp').innerText = data.metrics.lcp;
-            document.getElementById('metricTbt').innerText = data.metrics.tbt;
-            document.getElementById('metricCls').innerText = data.metrics.cls;
-            document.getElementById('metricSi').innerText = data.metrics.si;
+                // Populate metrics list
+                document.getElementById('metricFcp').innerText = data.metrics.fcp;
+                document.getElementById('metricLcp').innerText = data.metrics.lcp;
+                document.getElementById('metricTbt').innerText = data.metrics.tbt;
+                document.getElementById('metricCls').innerText = data.metrics.cls;
+                document.getElementById('metricSi').innerText = data.metrics.si;
 
-            updateBadge('titleBadge', data.title.value !== 'Missing Title', `Title: ${data.title.value}`);
-            updateBadge('descBadge', data.description.value !== 'Missing Description', `Desc: ${data.description.value}`);
-            updateBadge('h1Badge', data.h1Count === 1, `H1 Count: ${data.h1Count}`);
-            updateBadge('imgBadge', data.images.missingAlt === 0, `Missing Alt Text: ${data.images.missingAlt}`);
+                updateBadge('titleBadge', data.title.value !== 'Missing Title', `Title: ${data.title.value}`);
+                updateBadge('descBadge', data.description.value !== 'Missing Description', `Desc: ${data.description.value}`);
+                updateBadge('h1Badge', data.h1Count === 1, `H1 Count: ${data.h1Count}`);
+                updateBadge('imgBadge', data.images.missingAlt === 0, `Missing Alt Text: ${data.images.missingAlt}`);
 
-            document.getElementById('reportTable').innerHTML = `
+                document.getElementById('reportTable').innerHTML = `
                 <tr>
                     <td><strong>Title Tag</strong></td>
                     <td style="color: var(--aurora-yellow); word-break: break-word;">${data.title.value}</td>
@@ -391,22 +468,23 @@
                 </tr>
             `;
 
-        } catch (err) {
-            console.error("Audit error details:", err);
-            alert("Error connecting to server. Make sure 'node server.js' is running!");
-            resultsContainer.classList.add('hidden');
-        } finally {
-            submitBtn.classList.remove('btn-loading');
+            } catch (err) {
+                console.error("Audit error details:", err);
+                alert("Error connecting to server. Make sure 'node server.js' is running!");
+                resultsContainer.classList.add('hidden');
+            } finally {
+                submitBtn.classList.remove('btn-loading');
+            }
         }
-    }
 
-    function updateBadge(id, isSuccess, text) {
-        const el = document.getElementById(id);
-        el.innerText = text;
-        el.style.borderColor = isSuccess ? 'var(--aurora-green)' : 'var(--aurora-red)';
-        el.style.color = isSuccess ? 'var(--aurora-green)' : 'var(--aurora-red)';
-    }
-</script>
+        function updateBadge(id, isSuccess, text) {
+            const el = document.getElementById(id);
+            el.innerText = text;
+            el.style.borderColor = isSuccess ? 'var(--aurora-green)' : 'var(--aurora-red)';
+            el.style.color = isSuccess ? 'var(--aurora-green)' : 'var(--aurora-red)';
+        }
+    </script>
 
 </body>
+
 </html>

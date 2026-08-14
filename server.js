@@ -41,7 +41,7 @@ app.post('/api/analyze', async (req, res) => {
 
         // 2. Fetch Google PageSpeed API for all categories and basic metrics
         const targetUrl = encodeURIComponent(url);
-        const apiKey = process.env.PAGESPEED_API_KEY || 'AIzaSyDFP_Q19LRE56WpAlpGjVdDaCldgOaOnis';
+        const apiKey = process.env.PAGESPEED_API_KEY || 'AIzaSyCcaHgIiLpAfM6m7u9q2DHo8RgyI2K0-S8';
         const apiEndpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${targetUrl}&strategy=mobile&category=performance&category=accessibility&category=best-practices&category=seo&key=${apiKey}`;
 
         const response = await axios.get(apiEndpoint, {
