@@ -5,6 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>&lt;AuditKit/&gt; // by John</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=JetBrains+Mono:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="icons/auditkit_favicon.png">
+    <link rel="icon" href="icons/auditkit_favicon.png" sizes="any">
     <style>
         :root {
             /* Nord Theme Base */
@@ -27,25 +34,64 @@
             --nordic-border: var(--nord-3);
             --nordic-text: var(--nord-4);
             --nordic-text-muted: var(--nord-4);
+
+            /* Typography */
+            --font-heading: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+            --font-body: 'Fira Code', Consolas, monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
             background-color: var(--nordic-bg);
             color: var(--nordic-text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: var(--font-body);
             margin: 0;
-            padding: 2rem;
+            padding: 2rem 2rem 140px 2rem;
+            min-height: 100vh;
+            box-sizing: border-box;
             display: flex;
             justify-content: center;
+            position: relative;
         }
 
+        /* --- Container centering / transition state --- */
         .container {
             width: 100%;
             max-width: 900px;
+            margin-top: 50vh;
+            transform: translateY(-50%);
+            transition: margin-top 0.7s cubic-bezier(0.65, 0, 0.35, 1),
+                transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .container.at-top {
+            margin-top: 0;
+            transform: translateY(0);
         }
 
         header {
             margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-family: var(--font-heading);
+        }
+
+        header h1 a {
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        header h1 a:hover {
+            opacity: 0.85;
+        }
+
+        header p {
+            font-family: var(--font-body);
         }
 
         .input-group {
@@ -61,6 +107,7 @@
             border: 1px solid var(--nordic-border);
             background-color: var(--nordic-card);
             color: var(--nordic-text);
+            font-family: var(--font-body);
             font-size: 1rem;
             outline: none;
         }
@@ -75,6 +122,7 @@
             border: none;
             background-color: var(--aurora-yellow);
             color: var(--nordic-bg);
+            font-family: var(--font-heading);
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
@@ -134,13 +182,22 @@
             word-break: break-word;
         }
 
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+        }
+
         table {
             width: 100%;
+            min-width: 520px;
             border-collapse: collapse;
             background-color: var(--nordic-card);
             border-radius: 12px;
             overflow: hidden;
             border: 1px solid var(--nordic-border);
+            font-family: var(--font-body);
         }
 
         th,
@@ -153,6 +210,7 @@
         th {
             background-color: rgba(255, 255, 255, 0.05);
             color: var(--aurora-yellow);
+            font-family: var(--font-heading);
         }
 
         tr:last-child td {
@@ -232,19 +290,417 @@
             white-space: nowrap;
             border: 0;
         }
+
+        /* ============================= */
+        /* Footer */
+        /* ============================= */
+        .site-footer {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 500;
+        }
+
+     
+        
+        .footer-dock {
+            background-color: var(--nordic-bg);
+            border: 1px solid var(--nordic-border);
+            border-bottom: none;
+            border-radius: 22px 22px 0 0;
+            padding: 14px 28px 12px;
+            display: flex;
+            gap: 22px;
+            align-items: center;
+            box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.35);
+            margin-top: -1px;
+        }
+
+        .footer-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--nordic-card);
+            border: 1px solid var(--nordic-border);
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+        }
+
+        .footer-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .footer-icon:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+        }
+
+        .footer-icon.icon-github {
+            color: var(--aurora-red);
+        }
+
+        .footer-icon.icon-github:hover {
+            border-color: var(--aurora-red);
+        }
+
+        .footer-icon.icon-email {
+            color: var(--aurora-orange);
+        }
+
+        .footer-icon.icon-email:hover {
+            border-color: var(--aurora-orange);
+        }
+
+        .footer-icon.icon-cv {
+            color: var(--aurora-yellow);
+        }
+
+        .footer-icon.icon-cv:hover {
+            border-color: var(--aurora-yellow);
+        }
+
+        .footer-icon.icon-projects {
+            color: var(--aurora-green);
+        }
+
+        .footer-icon.icon-projects:hover {
+            border-color: var(--aurora-green);
+        }
+
+        /* ============================= */
+        /* Toast notification            */
+        /* ============================= */
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 150px;
+            transform: translateX(-50%) translateY(12px);
+            background-color: var(--nordic-card);
+            border: 1px solid var(--aurora-green);
+            color: var(--aurora-green);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            padding: 10px 18px;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 900;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ============================= */
+        /* Projects Modal                */
+        /* ============================= */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 165px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background-color: var(--nordic-card);
+            border: 1px solid var(--nordic-border);
+            border-radius: 14px;
+            padding: 1.75rem;
+            width: 90%;
+            max-width: 420px;
+            transform: scale(0.92) translateY(8px);
+            transition: transform 0.25s ease;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .modal-header h2 {
+            font-family: var(--font-heading);
+            font-size: 1.15rem;
+            margin: 0;
+            color: var(--aurora-green);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--nordic-text-muted);
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .modal-close:hover {
+            color: var(--aurora-red);
+        }
+
+        .project-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--nordic-border);
+            color: var(--nordic-text);
+            text-decoration: none;
+            font-family: var(--font-body);
+            margin-bottom: 10px;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .project-link:last-child {
+            margin-bottom: 0;
+        }
+
+        .project-link:hover {
+            border-color: var(--aurora-yellow);
+            background-color: rgba(235, 203, 139, 0.08);
+        }
+
+        .project-link .project-name {
+            flex: 1;
+        }
+
+        .project-link span.arrow {
+            color: var(--aurora-yellow);
+        }
+
+        .project-icon {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            min-height: 34px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--nordic-bg);
+            border: 1px solid var(--nordic-border);
+        }
+
+        .project-icon .icon-mask {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            -webkit-mask-size: contain;
+            mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            mask-position: center;
+        }
+
+        .project-img-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .icon-mask.icon-wall {
+            background-color: var(--aurora-red);
+            -webkit-mask-image: url('icons/joffthewall_icon.png');
+            mask-image: url('icons/joffthewall_icon.png');
+        }
+
+        .icon-mask.icon-dex {
+            background-color: var(--aurora-purple);
+            -webkit-mask-image: url('icons/dex_icon.png');
+            mask-image: url('icons/dex_icon.png');
+        }
+
+        .icon-mask.icon-route {
+            background-color: var(--aurora-orange);
+            -webkit-mask-image: url('icons/route196_icon.png');
+            mask-image: url('icons/route196_icon.png');
+        }
+
+        .icon-mask.icon-pixel {
+            background-color: var(--aurora-green);
+            -webkit-mask-image: url('icons/pixellog_icon.png');
+            mask-image: url('icons/pixellog_icon.png');
+        }
+
+        /* ============================= */
+        /* Mobile responsiveness          */
+        /* ============================= */
+        @media (max-width: 640px) {
+            body {
+                padding: 1.25rem 1rem 175px 1rem;
+            }
+
+            .container {
+                margin-top: 42vh;
+            }
+
+            header p {
+                font-size: 0.9rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .input-group button {
+                width: 100%;
+            }
+
+            .category-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .badge-grid {
+                grid-template-columns: 1fr;
+            }
+
+            th,
+            td {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+            }
+
+            /* Footer dock */
+            .notch {
+                width: 110px;
+                height: 18px;
+            }
+
+            .notch .notch-camera {
+                width: 6px;
+                height: 6px;
+            }
+
+            .footer-dock {
+                gap: 12px;
+                padding: 10px 16px 10px;
+                border-radius: 18px 18px 0 0;
+            }
+
+            .footer-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 10px;
+            }
+
+            .footer-icon svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            /* Toast + modal repositioned for smaller footer */
+            .toast {
+                bottom: 128px;
+                max-width: 85vw;
+                text-align: center;
+                font-size: 0.8rem;
+                padding: 9px 14px;
+            }
+
+            .modal-overlay {
+                padding-bottom: 140px;
+                align-items: flex-end;
+            }
+
+            .modal-card {
+                width: 92%;
+                padding: 1.35rem;
+                max-width: 380px;
+            }
+
+            .modal-header h2 {
+                font-size: 1.05rem;
+            }
+
+            .project-link {
+                padding: 11px 12px;
+                font-size: 0.9rem;
+            }
+
+            .project-icon {
+                width: 30px;
+                height: 30px;
+                min-width: 30px;
+                min-height: 30px;
+            }
+
+            .project-icon .icon-mask {
+                width: 17px;
+                height: 17px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .category-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .footer-dock {
+                gap: 8px;
+                padding: 8px 12px 8px;
+            }
+
+            .footer-icon {
+                width: 34px;
+                height: 34px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <div class="container" id="mainContainer">
         <header>
-            <h1 style="font-family: 'Fira Code', Consolas, monospace; font-size: 1.6rem; margin-bottom: 0.5rem;">
-                <span style="color: #bf616a;">&lt;</span><span
-                    style="color: #d08770; font-weight: bold;">AuditKit</span><span
-                    style="color: #ebcb8b;">/</span><span style="color: #bf616a;">&gt;</span>
+            <h1 style="font-size: clamp(2.2rem, 9vw, 5rem); margin-bottom: 0.5rem; line-height: 1.05;">
+                <a href="/">
+                    <span style="color: #bf616a;">&lt;</span><span
+                        style="color: #d08770; font-weight: bold;">AuditKit</span><span
+                        style="color: #ebcb8b;">/</span><span style="color: #bf616a;">&gt;</span>
+                </a>
                 <span
-                    style="color: #a3be8c; font-size: 0.95rem; margin-left: 12px; font-style: italic; font-weight: normal;">//
+                    style="display: block; color: #a3be8c; font-size: clamp(0.8rem, 2.2vw, 0.95rem); margin-top: 6px; font-style: italic; font-weight: normal;">//
                     by John</span>
             </h1>
             <p style="color: var(--nordic-text-muted);">Enter a site URL to generate an instant technical SEO &
@@ -288,7 +744,7 @@
             <!-- Basic Metrics List Card -->
             <div class="card" style="margin-bottom: 2rem;">
                 <h3
-                    style="margin-top: 0; border-bottom: 1px solid var(--nordic-border); padding-bottom: 10px; color: var(--aurora-yellow);">
+                    style="margin-top: 0; border-bottom: 1px solid var(--nordic-border); padding-bottom: 10px; color: var(--aurora-yellow); font-family: var(--font-heading);">
                     Metrics</h3>
                 <div class="metrics-grid">
                     <div>
@@ -335,21 +791,128 @@
                 <div class="badge" id="imgBadge">Missing Alt: -</div>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Element</th>
-                        <th>Result</th>
-                        <th>Recommendation</th>
-                    </tr>
-                </thead>
-                <tbody id="reportTable">
-                    <tr>
-                        <td colspan="3" style="text-align: center; color: var(--nordic-text-muted);">No audit data yet.
-                            Enter a URL above.</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Element</th>
+                            <th>Result</th>
+                            <th>Recommendation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTable">
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: var(--nordic-text-muted);">No audit data
+                                yet.
+                                Enter a URL above.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================= -->
+    <!-- Footer with iPhone 11 notch   -->
+    <!-- ============================= -->
+    <footer class="site-footer">
+        <div class="notch">
+            <div class="notch-camera"></div>
+        </div>
+        <div class="footer-dock">
+            <a class="footer-icon icon-github" href="https://github.com/jpldeleon/AuditKit" target="_blank"
+                rel="noopener noreferrer" title="AuditKit on GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.09 3.29 9.4 7.86 10.93.57.1.78-.25.78-.55
+                        0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69
+                        -1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96
+                        .1-.75.4-1.25.73-1.53-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.08
+                        -.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.73 0
+                        c2.18-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.74.8 1.18 1.82 1.18 3.08
+                        0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17
+                        0 .3.2.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z" />
+                </svg>
+            </a>
+
+            <a class="footer-icon icon-email" href="mailto:jpleonard.deleon@gmail.com" title="Copy email address"
+                onclick="copyEmail(event)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4h16v16H4z" opacity="0" />
+                    <path d="M3 6h18v12H3z" />
+                    <path d="M3 7l9 6 9-6" />
+                </svg>
+            </a>
+
+            <a class="footer-icon icon-cv" href="https://jpldeleon.github.io/" target="_blank" rel="noopener noreferrer"
+                title="View CV">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                </svg>
+            </a>
+
+            <a class="footer-icon icon-projects" href="#" title="Projects Directory" onclick="openProjectsModal(event)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Toast for email copy confirmation -->
+    <div class="toast" id="emailToast">Email copied to clipboard ✓</div>
+
+    <!-- Projects Directory Modal -->
+    <div class="modal-overlay" id="projectsModal" onclick="closeProjectsModalOnOverlay(event)">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>&lt;Projects/&gt;</h2>
+                <button class="modal-close" onclick="closeProjectsModal()" aria-label="Close">&times;</button>
+            </div>
+
+            <a class="project-link" href="https://johnoffthewall.github.io/" target="_blank" rel="noopener noreferrer">
+                <span class="project-icon">
+                    <img src="icons/joffthewall_icon.png" alt="" class="project-img-icon"
+                        style="filter: brightness(0) saturate(100%) invert(50%) sepia(50%) saturate(500%) hue-rotate(300deg);">
+                </span>
+                <span class="project-name">John Off the Wall</span>
+                <span class="arrow">&rarr;</span>
+            </a>
+
+            <a class="project-link" href="https://jamporudex.onrender.com/" target="_blank" rel="noopener noreferrer">
+                <span class="project-icon">
+                    <img src="icons/dex_icon.png" alt="" class="project-img-icon"
+                        style="filter: brightness(0) saturate(100%) invert(45%) sepia(30%) saturate(800%) hue-rotate(240deg);">
+                </span>
+                <span class="project-name">JamporuDEX</span>
+                <span class="arrow">&rarr;</span>
+            </a>
+
+            <a class="project-link" href="https://route196.onrender.com/" target="_blank"
+                rel="noopener noreferrer">
+                <span class="project-icon">
+                    <img src="icons/route196_icon.png" alt="" class="project-img-icon"
+                        style="filter: brightness(0) saturate(100%) invert(60%) sepia(40%) saturate(600%) hue-rotate(330deg);">
+                </span>
+                <span class="project-name">Route 196</span>
+                <span class="arrow">&rarr;</span>
+            </a>
+
+            <a class="project-link" href="https://github.com/jpldeleon/pixellog" target="_blank"
+                rel="noopener noreferrer">
+                <span class="project-icon">
+                    <img src="icons/pixellog_icon.png" alt="" class="project-img-icon"
+                        style="filter: brightness(0) saturate(100%) invert(70%) sepia(30%) saturate(500%) hue-rotate(50deg);">
+                </span>
+                <span class="project-name">PixelLog</span>
+                <span class="arrow">&rarr;</span>
+            </a>
         </div>
     </div>
 
@@ -380,6 +943,10 @@
 
             const resultsContainer = document.getElementById('resultsContainer');
             resultsContainer.classList.remove('hidden');
+
+            // Shift layout from centered hero state up to the top once results are being generated
+            document.getElementById('mainContainer').classList.add('at-top');
+
             document.getElementById('reportTable').innerHTML = `
             <tr>
                 <td colspan="3">
@@ -409,6 +976,7 @@
                 if (data.error) {
                     alert(data.error);
                     resultsContainer.classList.add('hidden');
+                    document.getElementById('mainContainer').classList.remove('at-top');
                     return;
                 }
 
@@ -472,6 +1040,7 @@
                 console.error("Audit error details:", err);
                 alert("Error connecting to server. Make sure 'node server.js' is running!");
                 resultsContainer.classList.add('hidden');
+                document.getElementById('mainContainer').classList.remove('at-top');
             } finally {
                 submitBtn.classList.remove('btn-loading');
             }
@@ -483,6 +1052,66 @@
             el.style.borderColor = isSuccess ? 'var(--aurora-green)' : 'var(--aurora-red)';
             el.style.color = isSuccess ? 'var(--aurora-green)' : 'var(--aurora-red)';
         }
+
+        // ============================= //
+        // Footer interactions            //
+        // ============================= //
+
+        function copyEmail(event) {
+            event.preventDefault();
+            const email = 'jpleonard.deleon@gmail.com';
+
+            const showToast = () => {
+                const toast = document.getElementById('emailToast');
+                toast.classList.add('show');
+                clearTimeout(window._toastTimeout);
+                window._toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2200);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(email).then(showToast).catch(() => {
+                    fallbackCopy(email);
+                    showToast();
+                });
+            } else {
+                fallbackCopy(email);
+                showToast();
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try { document.execCommand('copy'); } catch (e) { /* no-op */ }
+            document.body.removeChild(textarea);
+        }
+
+        function openProjectsModal(event) {
+            if (event) event.preventDefault();
+            document.getElementById('projectsModal').classList.add('show');
+        }
+
+        function closeProjectsModal() {
+            document.getElementById('projectsModal').classList.remove('show');
+        }
+
+        function closeProjectsModalOnOverlay(event) {
+            if (event.target === event.currentTarget) {
+                closeProjectsModal();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeProjectsModal();
+            }
+        });
     </script>
 
 </body>
